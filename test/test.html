@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!-- 不要缓存 -->
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+	<meta http-equiv="Expires" content="0">
+	<title>gm-crypto</title>
+    
+    <script src="js/gm-crypto.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        console.log('window', window);
+        
+        const { SM2, SM3, SM4 } = window.gmCrypto;
+        const { ECB, CBC } = SM4.constants;
+        // Plain message
+        const data = '无线局域网产品使用的 SMS4 密码算法';
+        
+        console.log(SM3.digest(data, 'utf8', 'hex'));
+        // 8b34410fe2ce27347e197c4415449b157db1382efbe119745715170ac89e2215
+        // /mnt/heidun/gm_tool sm3 '5peg57q/5bGA5Z+f572R5Lqn5ZOB5L2/55So55qEIFNNUzQg5a+G56CB566X5rOV'
+        // OGIzNDQxMGZlMmNlMjczNDdlMTk3YzQ0MTU0NDliMTU3ZGIxMzgyZWZiZTExOTc0NTcxNTE3MGFjODllMjIxNQ==
+        // 8b34410fe2ce27347e197c4415449b157db1382efbe119745715170ac89e2215
+        console.log(SM3.digest('567', 'utf8', 'hex'));
+        
+        const key = '0123456789abcdeffedcba9876543210'; // Any string of 32 hexadecimal digits
+        const originalData = 'SM4 国标对称加密';
+        
+        let encryptedData, decryptedData;
+        // CBC
+        const iv = '0123456789abcdeffedcba9876543210'; // Initialization vector(any string of 32 hexadecimal digits)
+        encryptedData = SM4.encrypt(originalData, key, {
+          iv: iv,
+          mode: CBC,
+          inputEncoding: 'utf8',
+          //outputEncoding: 'hex',
+          outputEncoding: 'base64'
+        });
+        console.log('encryptedData', encryptedData);
+        // encryptedData = '67fe3d64a0e46f97729cac8876122eb6';
+        decryptedData = SM4.decrypt(encryptedData, key, {
+          iv: iv,
+          mode: CBC,
+          // inputEncoding: 'hex',
+          inputEncoding: 'base64',
+          outputEncoding: 'utf8'
+        });
+        console.log('decryptedData', decryptedData);
+        
+        // /mnt/heidun/gm_tool sm4cbc enc -hexiv '0123456789abcdeffedcba9876543210' -hexkey '0123456789abcdeffedcba9876543210' 'U000IOWbveagh+WvueensOWKoOWvhg=='
+        // YveMjBnH+f7oAMpPPDHLJhpOaGNP12KA+vKS8d1zlmU=
+        encryptedData = 'YveMjBnH+f7oAMpPPDHLJhpOaGNP12KA+vKS8d1zlmU=';
+        decryptedData = SM4.decrypt(encryptedData, key, {
+          iv: iv,
+          mode: CBC,
+          // inputEncoding: 'hex',
+          inputEncoding: 'base64',
+          outputEncoding: 'utf8'
+        });
+        console.log('decryptedData', decryptedData);
+        
+        // /mnt/heidun/gm_tool sm4cbc dec -hexiv '0123456789abcdeffedcba9876543210' -hexkey '0123456789abcdeffedcba9876543210' 'YveMjBnH+f7oAMpPPDHLJhpOaGNP12KA+vKS8d1zlmU='
+        // U000IOWbveagh+WvueensOWKoOWvhg==
+        
+	</script>
+</head>
+
+<body style="overflow-y:auto;">
+<div></div>
+</body>
+</html>
